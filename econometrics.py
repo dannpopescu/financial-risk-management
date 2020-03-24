@@ -2,18 +2,63 @@ import pandas as pd
 import numpy as np
 
 
-def log_return(prices: pd.Series) -> pd.Series:
+def log_return(prices):
+    """
+    Compute Logarithmic Returns
+
+    Parameters
+    ----------
+    prices : pd.Series
+        Series of prices
+
+    Returns
+    -------
+    log_ret : pd.Series
+        Series of logarithmic returns with name 'log_reg'
+    """
     log_ret = np.log(prices / prices.shift(1))
     log_ret.name = 'log_ret'
     return log_ret
 
 
-def drop_consecutive_duplicates(df: pd.DataFrame, prices_column: str) -> pd.DataFrame:
+def drop_consecutive_duplicates(df, prices_column):
+    """
+    Drop rows that contain consecutive duplicate prices
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame containing the prices
+    prices_column : str
+        Column name containing the price information
+
+    Returns
+    -------
+    df : pd.DataFrame
+        DataFrame without the rows that contained consecutive duplicate prices
+
+    """
     not_duplicate = df[prices_column] != df[prices_column].shift(1)
     return df.loc[not_duplicate]
 
 
 def risk_metrics_variance(returns: pd.Series) -> pd.Series:
+    """
+    Compute variance based on JP Morgan's RiskMetrics model for dynamic volatility.
+    The volatility at t+1 is computed at the end of time t using the following rule:
+    Var(t+1) = 0.94*Var(t) + 0.06*Ret(t)^2
+
+    Parameters
+    ----------
+    returns : pd.Series
+        Series of returns
+
+    Returns
+    -------
+    variance : pd.Series
+        Series of variance for every day that has a return in the input series
+
+    """
     variance = pd.Series(index=returns.index, dtype='float64', name='RM Variance')
 
     if np.isnan(returns[0]):
