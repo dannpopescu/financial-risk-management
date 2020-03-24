@@ -42,7 +42,7 @@ def drop_consecutive_duplicates(df, prices_column):
     return df.loc[not_duplicate]
 
 
-def risk_metrics_variance(returns: pd.Series) -> pd.Series:
+def risk_metrics_variance(returns):
     """
     Compute variance based on JP Morgan's RiskMetrics model for dynamic volatility.
     The volatility at t+1 is computed at the end of time t using the following rule:
